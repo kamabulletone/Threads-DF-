@@ -1,0 +1,47 @@
+public class Context {
+     Strategy cSt;
+     Thread curTh;
+     Thread mainTh;
+     public Context(Thread curTh) {
+         this.curTh = curTh;
+     }
+
+    public String go() {
+        cSt = new Strategy1(this);
+        while(true) {
+            //System.out.println(cSt.run());
+            //System.out.println(curTh.getName());
+            Thread mainTh = Thread.currentThread();
+            Thread.State state = mainTh.getState();
+            if (state == Thread.State.WAITING) {
+                curTh.interrupt();
+                Thread.currentThread().stop();
+            }
+            System.out.println();
+        }
+    }
+}
+
+
+package df.pack;
+
+public class Main {
+
+    public static void main(String[] args) throws InterruptedException {
+
+        Thread th = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Context c = new Context(Thread.currentThread());
+               c.go();
+               // System.out.println(Thread.currentThread().getName());
+            }
+        }, "mythread");
+        th.start();
+      //  System.out.println(Thread.currentThread().getName());
+        Thread.sleep(3000);
+
+
+
+    }
+}
